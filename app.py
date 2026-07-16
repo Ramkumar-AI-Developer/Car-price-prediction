@@ -158,11 +158,15 @@ elif selected == "Predict":
     # Label encoding
     for col in label_encoding_columns:
         try:
+            # Ensure the input type matches the encoder's expected type
+            target_type = type(label_encoders[col].classes_[0])
+            input_df[col] = input_df[col].astype(target_type)
+
             input_values = input_df[col].unique()
             known_classes = label_encoders[col].classes_
             for val in input_values:
                 if val not in known_classes:
-                    input_df[col].replace(val, known_classes[0], inplace=True)
+                    input_df[col] = input_df[col].replace(val, known_classes[0])
             input_df[col] = label_encoders[col].transform(input_df[col])
         except Exception as e:
             st.error(f"Error in encoding column '{col}': {e}")
